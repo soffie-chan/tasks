@@ -10,7 +10,7 @@ function App(): React.JSX.Element {
                 UD CISC275 with React Hooks and TypeScript with Soffie Paul!
             </header>
             <h1>Hello World! Make way for the greatest site EVER!</h1>
-            <img src={img} alt="Manatee"></img>
+            <img src={img} alt="Manatee" />
             <div>
                 <ul>
                     <li>
