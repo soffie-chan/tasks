@@ -1,6 +1,7 @@
 import React from "react";
 import "./App.css";
 import img from "../src/assets/Manatee.png";
+import { Button, Col, Container, Row } from "react-bootstrap";
 
 function App(): React.JSX.Element {
     return (
@@ -10,7 +11,6 @@ function App(): React.JSX.Element {
             </header>
             <h1>Hello World! Make way for the greatest site EVER!</h1>
             <img src={img} alt="Manatee"></img>
-
             <div>
                 <ul>
                     <li>
@@ -27,6 +27,32 @@ function App(): React.JSX.Element {
                         towards humans.
                     </li>
                 </ul>
+            </div>
+            <div>
+                <Button
+                    onClick={() => {
+                        console.log("Hello World!");
+                    }}
+                >
+                    Say Hello to the World - Log Hello World
+                </Button>
+            </div>
+
+            <div
+                style={{
+                    backgroundColor: "red",
+                    width: "100px",
+                    height: "400px",
+                }}
+            >
+                <Container>
+                    <Row>
+                        <Col>Did you hear about the cheetah-crab hybrids?</Col>
+                        <Col>
+                            Apparently things went sideways really fast...
+                        </Col>
+                    </Row>
+                </Container>
             </div>
 
             <p>
