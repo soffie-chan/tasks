@@ -2,16 +2,16 @@
  * Consume an array of numbers, and return a new array containing
  * JUST the first and last number. If there are no elements, return
  * an empty array. If there is one element, the resulting list should
- * the number twice.
+ * the number twice. [DONE]
  */
 export function bookEndList(numbers: number[]): number[] {
     let newList: number[];
-    if (!numbers[0]) {
+    if (numbers.length === 0) {
         newList = [];
-    } else if (numbers[0] && !numbers[1]) {
+    } else if (numbers.length === 1) {
         return [numbers[0], numbers[0]];
     } else {
-        return [numbers[0], numbers[numbers.length]];
+        return [numbers[0], numbers[numbers.length - 1]];
     }
     return newList;
 }
@@ -30,6 +30,9 @@ export function tripleNumbers(numbers: number[]): number[] {
  * the number cannot be parsed as an integer, convert it to 0 instead.
  */
 export function stringsToIntegers(numbers: string[]): number[] {
+    let newNums: number[] = numbers.map((num: string): number =>
+        num.to < 0 || num ? 0 : num,
+    );
     return [];
 }
 
@@ -41,16 +44,24 @@ export function stringsToIntegers(numbers: string[]): number[] {
  */
 // Remember, you can write functions as lambdas too! They work exactly the same.
 export const removeDollars = (amounts: string[]): number[] => {
-    return [];
+    let copyAmounts: string[] = [...amounts];
+    //let amountNumbers: number[] = copyAmounts.map((amt:string):number=> amt[0]==="$" ? stringsToIntegers: );
+    return amountNumbers;
 };
 
 /**
  * Consume an array of messages and return a new list of the messages. However, any
  * string that ends in "!" should be made uppercase. Also, remove any strings that end
- * in question marks ("?").
+ * in question marks ("?"). [DONE]
  */
 export const shoutIfExclaiming = (messages: string[]): string[] => {
-    return [];
+    let noQuestions: string[] = messages.filter(
+        (message: string): boolean => message[message.length - 1] !== "?",
+    );
+    let shoutMessages: string[] = noQuestions.map((message: string): string =>
+        message[message.length - 1] === "!" ? message.toUpperCase() : message,
+    );
+    return shoutMessages;
 };
 
 /**
@@ -104,11 +115,41 @@ export function makeMath(addends: number[]): string {
  * Consumes an array of numbers and produces a new array of the same numbers,
  * with one difference. After the FIRST negative number, insert the sum of all
  * previous numbers in the list. If there are no negative numbers, then append
- * the sum to the list.
+ * the sum to the list. [DONE]
  *
  * For instance, the array [1, 9, -5, 7] would become [1, 9, -5, 10, 7]
  * And the array [1, 9, 7] would become [1, 9, 7, 17]
  */
 export function injectPositive(values: number[]): number[] {
-    return [];
+    /**
+     * Find negative position = negativepos using findIndex of num<0
+     * Find the sum of list using reduce
+     * Use ...[list] and splice(negativepos, 0, sum) OR just [...list, sum]
+     */
+    if (values.length === 0) {
+        return [0];
+    }
+
+    let firstNegativeInt: number = -1;
+    firstNegativeInt = values.findIndex((num: number): boolean => num < 0);
+    let newList: number[] = [...values];
+    if (firstNegativeInt < 0) {
+        //if all values are positive
+        let sumOfList: number = values.reduce(
+            (total: number, num: number): number => total + num,
+        );
+        newList = [...newList, sumOfList];
+    } else {
+        let sumOfSmallerList: number;
+        if (newList[0] < 0) {
+            sumOfSmallerList = 0;
+        } else {
+            let newSmallList = newList.slice(0, firstNegativeInt);
+            sumOfSmallerList = newSmallList.reduce(
+                (total: number, num: number): number => total + num,
+            );
+        }
+        newList.splice(firstNegativeInt + 1, 0, sumOfSmallerList);
+    }
+    return newList;
 }
