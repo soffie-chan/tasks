@@ -27,26 +27,28 @@ export function tripleNumbers(numbers: number[]): number[] {
 
 /**
  * Consume an array of strings and convert them to integers. If
- * the number cannot be parsed as an integer, convert it to 0 instead.
+ * the number cannot be parsed as an integer, convert it to 0 instead. [DONE]
  */
 export function stringsToIntegers(numbers: string[]): number[] {
     let newNums: number[] = numbers.map((num: string): number =>
-        num.to < 0 || num ? 0 : num,
+        Number(num) > 0 || +Number(num) ? Number(num) : 0,
     );
-    return [];
+    return newNums;
 }
 
 /**
  * Consume an array of strings and return them as numbers. Note that
  * the strings MAY have "$" symbols at the beginning, in which case
  * those should be removed. If the result cannot be parsed as an integer,
- * convert it to 0 instead.
+ * convert it to 0 instead. [DONE]
  */
 // Remember, you can write functions as lambdas too! They work exactly the same.
 export const removeDollars = (amounts: string[]): number[] => {
     let copyAmounts: string[] = [...amounts];
-    //let amountNumbers: number[] = copyAmounts.map((amt:string):number=> amt[0]==="$" ? stringsToIntegers: );
-    return amountNumbers;
+    let newAmounts: string[] = copyAmounts.map((amt: string): string =>
+        amt[0] === "$" ? amt.slice(1, amt.length) : amt,
+    );
+    return stringsToIntegers(newAmounts);
 };
 
 /**
