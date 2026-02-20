@@ -3,14 +3,24 @@ import { Question, QuestionType } from "./interfaces/question";
 /**
  * Create a new blank question with the given `id`, `name`, and `type. The `body` and
  * `expected` should be empty strings, the `options` should be an empty list, the `points`
- * should default to 1, and `published` should default to false.
+ * should default to 1, and `published` should default to false. [DONE]
  */
 export function makeBlankQuestion(
     id: number,
     name: string,
-    type: QuestionType
+    type: QuestionType,
 ): Question {
-    return {};
+    let question: Question = {
+        id,
+        name,
+        type,
+        body: "",
+        options: [],
+        expected: "",
+        points: 1,
+        published: false,
+    };
+    return question;
 }
 
 /**
@@ -18,9 +28,15 @@ export function makeBlankQuestion(
  * the `answer` is correct. You should check that the `answer` is equal to
  * the `expected`, ignoring capitalization and trimming any whitespace.
  *
- * HINT: Look up the `trim` and `toLowerCase` functions.
+ * HINT: Look up the `trim` and `toLowerCase` functions. [DONE]
  */
 export function isCorrect(question: Question, answer: string): boolean {
+    let expectedAnswer: string = answer;
+    expectedAnswer = expectedAnswer.toLowerCase();
+    expectedAnswer = expectedAnswer.trim();
+    if (question.expected.toLowerCase() === expectedAnswer) {
+        return true;
+    }
     return false;
 }
 
@@ -28,9 +44,20 @@ export function isCorrect(question: Question, answer: string): boolean {
  * Consumes a question and a potential `answer`, and returns whether or not
  * the `answer` is valid (but not necessarily correct). For a `short_answer_question`,
  * any answer is valid. But for a `multiple_choice_question`, the `answer` must
- * be exactly one of the options.
+ * be exactly one of the options. [DONE]
  */
 export function isValid(question: Question, answer: string): boolean {
+    if (question.type === "short_answer_question") {
+        return true;
+    } else {
+        let potentialAnswer: string[] = [];
+        potentialAnswer = question.options.filter(
+            (ans: string): boolean => answer === ans,
+        );
+        if (potentialAnswer.length != 0) {
+            return true;
+        }
+    }
     return false;
 }
 
@@ -38,10 +65,10 @@ export function isValid(question: Question, answer: string): boolean {
  * Consumes a question and produces a string representation combining the
  * `id` and first 10 characters of the `name`. The two strings should be
  * separated by ": ". So for example, the question with id 9 and the
- * name "My First Question" would become "9: My First Q".
+ * name "My First Question" would become "9: My First Q". [DONE]
  */
 export function toShortForm(question: Question): string {
-    return "";
+    return question.id + ": " + question.name.slice(0, 10);
 }
 
 /**
@@ -49,7 +76,7 @@ export function toShortForm(question: Question): string {
  *  - The first line should be a hash sign, a space, and then the `name`
  *  - The second line should be the `body`
  *  - If the question is a `multiple_choice_question`, then the following lines
- *      need to show each option on its line, preceded by a dash and space.
+ *      need to show each option on its line, preceded by a dash and space. [DONE]
  *
  * The example below might help, but don't include the border!
  * ----------Example-------------
@@ -62,7 +89,15 @@ export function toShortForm(question: Question): string {
  * Check the unit tests for more examples of what this looks like!
  */
 export function toMarkdown(question: Question): string {
-    return "";
+    let header: string = "# " + question.name + "\n";
+    let qna: string = question.body;
+    if (question.type === "multiple_choice_question") {
+        for (let q of question.options) {
+            qna += "\n" + "- " + q;
+        }
+    }
+
+    return header + qna;
 }
 
 /**
@@ -115,7 +150,7 @@ export function mergeQuestion(
     id: number,
     name: string,
     contentQuestion: Question,
-    { points }: { points: number }
+    { points }: { points: number },
 ): Question {
     return contentQuestion;
 }
