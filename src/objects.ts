@@ -86,7 +86,7 @@ export function toShortForm(question: Question): string {
  * |- Option 2                  |
  * |- Option 3                  |
  * ------------------------------
- * Check the unit tests for more examples of what this looks like!
+ * Check the unit tests for more examples of what this looks like! [DONE]
  */
 export function toMarkdown(question: Question): string {
     let header: string = "# " + question.name + "\n";
@@ -100,31 +100,43 @@ export function toMarkdown(question: Question): string {
     return header + qna;
 }
 
+//Gotta start using const from here on out ngl
+
 /**
  * Return a new version of the given question, except the name should now be
- * `newName`.
+ * `newName`. [DONE]
  */
 export function renameQuestion(question: Question, newName: string): Question {
-    return question;
+    const newQuestion = { ...question, name: newName };
+    return newQuestion;
 }
 
 /**
  * Return a new version of the given question, except the `published` field
  * should be inverted. If the question was not published, now it should be
- * published; if it was published, now it should be not published.
+ * published; if it was published, now it should be not published. [DONE]
  */
 export function publishQuestion(question: Question): Question {
-    return question;
+    const publishOrNah = !question.published;
+    const publishedQna = { ...question, published: publishOrNah };
+    return publishedQna;
 }
 
 /**
  * Create a new question based on the old question, copying over its `body`, `type`,
  * `options`, `expected`, and `points` without changes. The `name` should be copied
  * over as "Copy of ORIGINAL NAME" (e.g., so "Question 1" would become "Copy of Question 1").
- * The `published` field should be reset to false.
+ * The `published` field should be reset to false. [DONE]
  */
 export function duplicateQuestion(id: number, oldQuestion: Question): Question {
-    return oldQuestion;
+    const newName = "Copy of " + oldQuestion.name;
+    const newQuestion = {
+        ...oldQuestion,
+        name: newName,
+        published: false,
+        id: id,
+    };
+    return newQuestion;
 }
 
 /**
@@ -132,10 +144,14 @@ export function duplicateQuestion(id: number, oldQuestion: Question): Question {
  * the list of existing `options`. Remember that the new Question MUST have
  * its own separate copy of the `options` list, rather than the same reference
  * to the original question's list!
- * Check out the subsection about "Nested Fields" for more information.
+ * Check out the subsection about "Nested Fields" for more information. [DONE]
  */
 export function addOption(question: Question, newOption: string): Question {
-    return question;
+    const newQuestion = {
+        ...question,
+        options: [...question.options, newOption],
+    };
+    return newQuestion;
 }
 
 /**
@@ -144,7 +160,7 @@ export function addOption(question: Question, newOption: string): Question {
  * `contentQuestion`. The second question will provide the `points`.
  * The `published` status should be set to false.
  * Notice that the second Question is provided as just an object with a `points`
- * field; but the function call would be the same as if it were a `Question` type!
+ * field; but the function call would be the same as if it were a `Question` type! [DONE]
  */
 export function mergeQuestion(
     id: number,
@@ -152,5 +168,12 @@ export function mergeQuestion(
     contentQuestion: Question,
     { points }: { points: number },
 ): Question {
-    return contentQuestion;
+    const newQuestion = {
+        ...contentQuestion,
+        id: id,
+        name: name,
+        published: false,
+        points: points,
+    };
+    return newQuestion;
 }
