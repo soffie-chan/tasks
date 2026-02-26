@@ -1,5 +1,6 @@
 import { Answer } from "./interfaces/answer";
 import { Question, QuestionType } from "./interfaces/question";
+import { makeBlankQuestion } from "./objects";
 
 /**
  * Consumes an array of questions and returns a new array with only the questions
@@ -23,7 +24,9 @@ export function getNonEmptyQuestions(questions: Question[]): Question[] {
         (question: Question): boolean =>
             question.body !== "" &&
             question.expected !== "" &&
-            question.options.length !== 0,
+            (question.type === "multiple_choice_question" ?
+                question.options.length !== 0
+            :   question.options.length === 0),
     );
     return nonEmptyQuestions;
 }
@@ -81,11 +84,12 @@ export function sumPoints(questions: Question[]): number {
 }
 
 /***
- * Consumes an array of questions and returns the sum total of the PUBLISHED questions.
+ * Consumes an array of questions and returns the sum total of the PUBLISHED questions. [DONE]
  */
 export function sumPublishedPoints(questions: Question[]): number {
     const publishedQuestions: number[] = questions.map(
-        (question: Question): number => (question.published ? 1 : 0),
+        (question: Question): number =>
+            question.published ? question.points : 0,
     );
     const totalPublished: number = publishedQuestions.reduce(
         (questSum: number = 0, currNum: number) => questSum + currNum,
@@ -108,19 +112,42 @@ id,name,options,points,published
 5,Colors,3,1,true
 9,Shapes,3,2,false
 ` *
- * Check the unit tests for more examples!
+ * Check the unit tests for more examples! [DONE]
  */
 export function toCSV(questions: Question[]): string {
-    return "";
+    const header: string = "id,name,options,points,published\n";
+    let CSVQuestions: string[] = [];
+    CSVQuestions = questions.map(
+        (question: Question): string =>
+            question.id +
+            "," +
+            question.name +
+            "," +
+            question.options.length +
+            "," +
+            question.points +
+            "," +
+            question.published,
+    );
+    return header + CSVQuestions.join("\n");
 }
 
 /**
  * Consumes an array of Questions and produces a corresponding array of
  * Answers. Each Question gets its own Answer, copying over the `id` as the `questionId`,
- * making the `text` an empty string, and using false for both `submitted` and `correct`.
+ * making the `text` an empty string, and using false for both `submitted` and `correct`. [DONE]
  */
 export function makeAnswers(questions: Question[]): Answer[] {
-    return [];
+    let answers: Answer[];
+    answers = questions.map(
+        (question: Question): Answer => ({
+            questionId: question.id,
+            text: "",
+            submitted: false,
+            correct: false,
+        }),
+    );
+    return answers;
 }
 
 /***
@@ -158,7 +185,7 @@ export function sameType(questions: Question[]): boolean {
 /***
  * Consumes an array of Questions and produces a new array of the same Questions,
  * except that a blank question has been added onto the end. Reuse the `makeBlankQuestion`
- * you defined in the `objects.ts` file.s
+ * you defined in the `objects.ts` file.s [DONE]
  */
 export function addNewQuestion(
     questions: Question[],
@@ -166,7 +193,9 @@ export function addNewQuestion(
     name: string,
     type: QuestionType,
 ): Question[] {
-    return [];
+    let newQues: Question = makeBlankQuestion(id, name, type);
+    let newQuestions: Question[] = [...questions, newQues];
+    return newQuestions;
 }
 
 /***
@@ -193,14 +222,31 @@ export function renameQuestionById(
  * the Questions are the same EXCEPT for the one with the given `targetId`. That
  * Question should be the same EXCEPT that its `type` should now be the `newQuestionType`
  * AND if the `newQuestionType` is no longer "multiple_choice_question" than the `options`
- * must be set to an empty list.
+ * must be set to an empty list. [DONE]
  */
 export function changeQuestionTypeById(
     questions: Question[],
     targetId: number,
     newQuestionType: QuestionType,
 ): Question[] {
-    return [];
+    const newQIsMCQ: boolean = newQuestionType === "multiple_choice_question";
+    let newQuestionWNewType: Question[];
+    if (newQIsMCQ) {
+        newQuestionWNewType = questions.map(
+            (question: Question): Question =>
+                targetId === question.id ?
+                    { ...question, type: newQuestionType }
+                :   question,
+        );
+    } else {
+        newQuestionWNewType = questions.map(
+            (question: Question): Question =>
+                targetId === question.id ?
+                    { ...question, type: newQuestionType, options: [] }
+                :   question,
+        );
+    }
+    return newQuestionWNewType;
 }
 
 /**
@@ -219,7 +265,32 @@ export function editOption(
     targetOptionIndex: number,
     newOption: string,
 ): Question[] {
-    return [];
+    let newQuestionWNewOptions: Question[];
+    if (targetOptionIndex === -1) {
+        newQuestionWNewOptions = questions.map(
+            (question: Question): Question =>
+                targetId === question.id ?
+                    {
+                        ...question,
+                        options: [...question.options, newOption],
+                    }
+                :   question,
+        );
+    } else {
+        newQuestionWNewOptions = questions.map(
+            (question: Question): Question =>
+                targetId === question.id ?
+                    {
+                        ...question,
+                        options: [
+                            ...question.options,
+                            (question.options[targetOptionIndex] = newOption),
+                        ],
+                    }
+                :   question,
+        );
+    }
+    return newQuestionWNewOptions;
 }
 
 /***
