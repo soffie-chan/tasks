@@ -4,6 +4,7 @@ import { Question, QuestionType } from "./interfaces/question";
  * Create a new blank question with the given `id`, `name`, and `type. The `body` and
  * `expected` should be empty strings, the `options` should be an empty list, the `points`
  * should default to 1, and `published` should default to false. [DONE]
+ * should default to 1, and `published` should default to false.
  */
 export function makeBlankQuestion(
     id: number,
@@ -91,13 +92,13 @@ export function toShortForm(question: Question): string {
 export function toMarkdown(question: Question): string {
     let header: string = "# " + question.name + "\n";
     let qna: string = question.body;
+    let options: string[] = [];
     if (question.type === "multiple_choice_question") {
-        for (let q of question.options) {
-            qna += "\n" + "- " + q;
-        }
+        options = question.options.map(
+            (option: string): string => "\n- " + option,
+        );
     }
-
-    return header + qna;
+    return header + qna + options.join("");
 }
 
 //Gotta start using const from here on out ngl
