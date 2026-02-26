@@ -1,6 +1,6 @@
 import { Answer } from "./interfaces/answer";
 import { Question, QuestionType } from "./interfaces/question";
-import { makeBlankQuestion } from "./objects";
+import { duplicateQuestion, makeBlankQuestion } from "./objects";
 
 /**
  * Consumes an array of questions and returns a new array with only the questions
@@ -17,16 +17,16 @@ export function getPublishedQuestions(questions: Question[]): Question[] {
 /**
  * Consumes an array of questions and returns a new array of only the questions that are
  * considered "non-empty". An empty question has an empty string for its `body` and
- * `expected`, and an empty array for its `options`.
+ * `expected`, and an empty array for its `options`. [DONE]
  */
 export function getNonEmptyQuestions(questions: Question[]): Question[] {
     const nonEmptyQuestions: Question[] = questions.filter(
         (question: Question): boolean =>
-            question.body !== "" &&
-            question.expected !== "" &&
-            (question.type === "multiple_choice_question" ?
-                question.options.length !== 0
-            :   question.options.length === 0),
+            !(
+                question.body === "" &&
+                question.expected === "" &&
+                question.options.length === 0
+            ),
     );
     return nonEmptyQuestions;
 }
@@ -257,7 +257,7 @@ export function changeQuestionTypeById(
  * Otherwise, it should *replace* the existing element at the `targetOptionIndex`.
  *
  * Remember, if a function starts getting too complicated, think about how a helper function
- * can make it simpler! Break down complicated tasks into little pieces.
+ * can make it simpler! Break down complicated tasks into little pieces. [DONE]
  */
 export function editOption(
     questions: Question[],
@@ -265,44 +265,68 @@ export function editOption(
     targetOptionIndex: number,
     newOption: string,
 ): Question[] {
-    let newQuestionWNewOptions: Question[];
+    let newQuestions3: Question[] = questions.map(
+        (question: Question): Question => ({
+            ...question,
+            options: [...question.options],
+        }),
+    ); //make a copy of questions
+    let targetQuestion: Question | undefined = newQuestions3.find(
+        (question: Question): Boolean => question.id === targetId, //find target question
+    );
+
+    if (!targetQuestion) {
+        //if targetquestion isnt in the list
+        return newQuestions3;
+    }
+    let targetQIndex: number = newQuestions3.findIndex(
+        (question: Question): Boolean => question.id === targetId, //find targetquestion's index
+    );
+
     if (targetOptionIndex === -1) {
-        newQuestionWNewOptions = questions.map(
-            (question: Question): Question =>
-                targetId === question.id ?
-                    {
-                        ...question,
-                        options: [...question.options, newOption],
-                    }
-                :   question,
-        );
+        newQuestions3[targetQIndex].options = [
+            ...newQuestions3[targetQIndex].options,
+            newOption,
+        ];
     } else {
-        newQuestionWNewOptions = questions.map(
-            (question: Question): Question =>
-                targetId === question.id ?
-                    {
-                        ...question,
-                        options: [
-                            ...question.options,
-                            (question.options[targetOptionIndex] = newOption),
-                        ],
-                    }
-                :   question,
+        newQuestions3[targetQIndex].options.splice(
+            targetOptionIndex,
+            1,
+            newOption,
         );
     }
-    return newQuestionWNewOptions;
+    return newQuestions3;
 }
 
 /***
  * Consumes an array of questions, and produces a new array based on the original array.
  * The only difference is that the question with id `targetId` should now be duplicated, with
  * the duplicate inserted directly after the original question. Use the `duplicateQuestion`
- * function you defined previously; the `newId` is the parameter to use for the duplicate's ID.
+ * function you defined previously; the `newId` is the parameter to use for the duplicate's ID. [DONE]
  */
 export function duplicateQuestionInArray(
     questions: Question[],
     targetId: number,
     newId: number,
 ): Question[] {
-    return [];
+    let newQuestions2: Question[] = questions.map(
+        (question: Question): Question => ({
+            ...question,
+            options: [...question.options],
+        }),
+    );
+    const copyQuestion: Question | undefined = questions.find(
+        (question: Question): Boolean => question.id === targetId,
+    );
+    if (!copyQuestion) {
+        return newQuestions2;
+    }
+    let copyQIndex: number = questions.findIndex(
+        (question: Question): Boolean => question.id === targetId,
+    );
+
+    let dupliQuestion: Question = duplicateQuestion(newId, copyQuestion);
+    //dupliQuestion = {...dupliQuestion, }
+    newQuestions2.splice(copyQIndex + 1, 0, dupliQuestion);
+    return newQuestions2;
 }
