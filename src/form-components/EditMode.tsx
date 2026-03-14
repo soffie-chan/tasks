@@ -21,6 +21,7 @@ export function EditMode(): React.JSX.Element {
             <Form.Check
                 type="checkbox"
                 checked={isStudent}
+                id="student"
                 className="form-check-input"
                 onChange={(e) => {
                     setisStudent(e.target.checked);
