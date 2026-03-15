@@ -14,6 +14,7 @@ export function EditMode(): React.JSX.Element {
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                         setUser(e.target.value);
                     }}
+                    id="student"
                     value={user}
                 ></Form.Control>
             </Form.Group>
@@ -34,6 +35,7 @@ export function EditMode(): React.JSX.Element {
         <div>
             <Form.Check
                 type="switch"
+                id="student"
                 checked={edit}
                 onChange={(e) => {
                     setEdit(e.target.checked);
